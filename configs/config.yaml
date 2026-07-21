@@ -1,0 +1,29 @@
+# Configuration settings for ISRO Landsat IR to RGB pipeline
+
+data:
+  raw_dir: "c:/Users/harshit/Desktop/ISRO/DATASET/FILES"
+  processed_dir: "c:/Users/harshit/Desktop/ISRO/DATASET/FILES/processed"
+  patch_size: 256
+  stride: 256
+  train_split: 0.8
+  max_background_pct: 0.3 # Skip patches with more than 30% zero/background pixels
+
+models:
+  realesrgan:
+    num_filters: 64
+    num_blocks: 8
+    scale: 4 # upscale factor for thermal super-resolution simulation
+  pix2pix:
+    lambda_l1: 100.0
+    lambda_semantic: 10.0 # Weight for semantic constraints (NDVI/NDWI)
+  
+training:
+  batch_size: 16
+  lr: 0.0002
+  beta1: 0.5
+  beta2: 0.999
+  epochs_sr: 10
+  epochs_pix2pix: 20
+  save_epoch_freq: 2
+  checkpoints_dir: "c:/Users/harshit/Desktop/ISRO/DATASET/checkpoints"
+  outputs_dir: "c:/Users/harshit/Desktop/ISRO/DATASET/outputs"

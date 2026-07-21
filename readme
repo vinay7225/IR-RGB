@@ -1,0 +1,448 @@
+# ISRO Bharatiya Antariksh Hackathon 2026
+
+# Infrared Image Colorization and Enhancement for Improved Object Interpretation
+
+## Project Goal
+
+Develop an end-to-end AI pipeline that converts low-resolution infrared (thermal) satellite images into high-resolution, realistic RGB images while preserving semantic integrity and improving downstream computer vision tasks such as object detection.
+
+This project uses paired Landsat 8/9 satellite imagery and follows a modular architecture so that every stage can be trained, tested, and improved independently.
+
+---
+
+# Current Development Stage
+
+This project is currently being developed using **20 downloaded Landsat 8/9 scenes** for demonstration and pipeline development.
+
+The primary objective at this stage is **NOT maximum accuracy**, but to build a complete working pipeline.
+
+After the entire system is stable, more Landsat scenes will be added and the models will be fine-tuned.
+
+The code must therefore be written so that it automatically supports any number of dataset folders without modification.
+
+Never hardcode dataset size.
+
+---
+
+# Dataset
+
+Current Dataset
+
+20 Landsat 8/9 scenes
+
+Each scene contains
+
+- Thermal Bands (.TIF)
+- RGB Bands (.TIF)
+- Metadata
+- Angle files
+- Quality bands
+
+Future Dataset
+
+The project should easily scale to hundreds or thousands of Landsat scenes by simply adding more folders.
+
+---
+
+# Input Data
+
+GeoTIFF (.TIF)
+
+Bands
+
+Thermal
+
+- Band 10
+- Band 11
+
+RGB
+
+- Band 2
+- Band 3
+- Band 4
+
+---
+
+# Project Pipeline
+
+Landsat Dataset
+
+↓
+
+Preprocessing
+
+↓
+
+Patch Generation
+
+↓
+
+Real-ESRGAN
+
+↓
+
+Pix2Pix Conditional GAN
+
+↓
+
+Semantic Constraint Layer
+
+↓
+
+Post Processing
+
+↓
+
+Evaluation
+
+↓
+
+YOLOv8 Validation
+
+↓
+
+Streamlit Demo
+
+---
+
+# Technology Stack
+
+## Programming Language
+
+Python 3.10+
+
+---
+
+## Deep Learning Framework
+
+PyTorch
+
+Torchvision
+
+---
+
+## Super Resolution
+
+Real-ESRGAN
+
+Purpose
+
+- Enhance thermal images
+- Recover fine structures
+- Sharpen edges
+- Increase effective resolution
+
+---
+
+## Colorization
+
+Pix2Pix Conditional GAN
+
+Generator
+
+- U-Net
+
+Discriminator
+
+- PatchGAN
+
+Purpose
+
+Convert Enhanced IR
+
+↓
+
+Realistic RGB
+
+---
+
+## Semantic Integrity
+
+ESA WorldCover
+
+Dynamic World
+
+Purpose
+
+Prevent hallucinated colors.
+
+Maintain physically meaningful colors.
+
+Examples
+
+Water
+
+↓
+
+Blue
+
+Vegetation
+
+↓
+
+Green
+
+Urban
+
+↓
+
+Gray
+
+---
+
+## Geospatial Processing
+
+Rasterio
+
+Purpose
+
+Read Landsat GeoTIFF files.
+
+Extract image bands.
+
+Crop training patches.
+
+Preserve geospatial metadata.
+
+GDAL
+
+Purpose
+
+Resampling
+
+Reprojection
+
+Image alignment
+
+Coordinate transformation
+
+---
+
+## Image Processing
+
+OpenCV
+
+NumPy
+
+Pillow
+
+---
+
+## Validation
+
+YOLOv8
+
+Purpose
+
+Compare object detection performance
+
+Raw IR
+
+vs
+
+Enhanced RGB
+
+---
+
+## Evaluation Metrics
+
+PSNR
+
+SSIM
+
+FID
+
+KID
+
+Inference Time
+
+mAP
+
+---
+
+## Deployment
+
+Streamlit
+
+---
+
+# Folder Structure
+
+project/
+
+│
+
+├── FILES/
+
+│ ├── raw/
+
+│ │ ├── scene_001/
+
+│ │ ├── scene_002/
+
+│ │ ├── ...
+
+│ │ └── scene_020/
+
+│ │
+
+│ ├── processed/
+
+│ ├── train/
+
+│ ├── validation/
+
+│ └── test/
+
+│
+
+├── preprocessing/
+
+├── models/
+
+│ ├── realesrgan/
+
+│ ├── pix2pix/
+
+│ ├── semantic/
+
+│ └── yolov8/
+
+├── training/
+
+├── evaluation/
+
+├── inference/
+
+├── deployment/
+
+├── outputs/
+
+├── checkpoints/
+
+├── configs/
+
+├── utils/
+
+├── notebooks/
+
+├── app.py
+
+├── requirements.txt
+
+└── README.md
+
+---
+
+# Development Phases
+
+## Phase 1
+
+Build complete pipeline.
+
+Use only the current 20 Landsat scenes.
+
+Ensure every module works correctly.
+
+- Data loading
+- Preprocessing
+- Patch generation
+- Super Resolution
+- Colorization
+- Semantic Constraint
+- Evaluation
+- Streamlit Demo
+
+---
+
+## Phase 2
+
+Increase dataset size.
+
+Simply add more scene folders.
+
+Pipeline should automatically process them.
+
+Do not modify code.
+
+Fine-tune existing models.
+
+---
+
+# Coding Requirements
+
+Build modular code.
+
+Separate
+
+- preprocessing
+- training
+- inference
+- evaluation
+- deployment
+
+Each module must be independently executable.
+
+Use configuration files.
+
+Avoid hardcoded paths.
+
+Support CPU and GPU.
+
+Automatically detect dataset folders.
+
+Example
+
+dataset/raw/
+
+↓
+
+Process every scene automatically.
+
+Do NOT assume exactly 20 folders exist.
+
+The pipeline should work for
+
+20 scenes
+
+200 scenes
+
+or
+
+2000 scenes
+
+without code changes.
+
+Save checkpoints after every epoch.
+
+Write reusable functions and classes.
+
+Provide detailed logging.
+
+---
+
+# Expected Output
+
+Enhanced Thermal Image
+
+↓
+
+High Resolution RGB Image
+
+↓
+
+Evaluation Report
+
+↓
+
+YOLOv8 Comparison
+
+↓
+
+Interactive Streamlit Application
+
+---
+
+# Long-Term Goal
+
+Once the complete pipeline is validated using the initial 20 Landsat scenes, additional satellite data will be continuously added to improve model accuracy, robustness, and generalization while keeping the same project architecture.
