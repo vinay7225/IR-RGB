@@ -183,17 +183,33 @@ def main():
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 🎛️ Model Configuration")
     
-    # Check for best checkpoints
-    sr_chk = os.path.join(checkpoints_dir, "realesrgan_best.pth")
-    pix_chk = os.path.join(checkpoints_dir, "pix2pix_gen_best.pth")
+    # Get available checkpoints
+    all_chks = os.listdir(checkpoints_dir) if os.path.exists(checkpoints_dir) else []
+    sr_chks = sorted([f for f in all_chks if f.startswith("realesrgan_") and f.endswith(".pth")])
+    pix_chks = sorted([f for f in all_chks if f.startswith("pix2pix_gen_") and f.endswith(".pth")])
     
-    sr_found = os.path.exists(sr_chk)
-    pix_found = os.path.exists(pix_chk)
-    
-    if not (sr_found and pix_found):
-        st.sidebar.warning("⚠️ Using random model weights (checkpoints not found). Run training first to get accurate outputs!")
+    if not sr_chks:
+        st.sidebar.warning("⚠️ No Real-ESRGAN checkpoints found.")
+        sr_chk = None
+        sr_found = False
     else:
-        st.sidebar.success("✔️ Trained model checkpoints found.")
+        def_sr_idx = sr_chks.index("realesrgan_best.pth") if "realesrgan_best.pth" in sr_chks else len(sr_chks)-1
+        sel_sr = st.sidebar.selectbox("Real-ESRGAN Checkpoint", sr_chks, index=def_sr_idx)
+        sr_chk = os.path.join(checkpoints_dir, sel_sr)
+        sr_found = True
+        
+    if not pix_chks:
+        st.sidebar.warning("⚠️ No Pix2Pix checkpoints found.")
+        pix_chk = None
+        pix_found = False
+    else:
+        def_pix_idx = pix_chks.index("pix2pix_gen_best.pth") if "pix2pix_gen_best.pth" in pix_chks else len(pix_chks)-1
+        sel_pix = st.sidebar.selectbox("Pix2Pix Checkpoint", pix_chks, index=def_pix_idx)
+        pix_chk = os.path.join(checkpoints_dir, sel_pix)
+        pix_found = True
+        
+    if sr_found and pix_found:
+        st.sidebar.success("✔️ Trained model checkpoints selected.")
         
     # Load scene data
     with st.spinner("Loading satellite bands..."):

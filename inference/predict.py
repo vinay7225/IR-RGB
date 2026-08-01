@@ -216,7 +216,7 @@ if __name__ == "__main__":
     if scene_folders:
         first_scene = os.path.join(raw_dir, scene_folders[0])
         model_sr = os.path.join(checkpoints_dir, "realesrgan_best.pth")
-        model_pix2pix = os.path.join(checkpoints_dir, "pix2pix_gen_best.pth")
+        model_pix2pix = os.path.join(checkpoints_dir, "pix2pix_gen_epoch_4.pth")
         out_tif = os.path.join(outputs_dir, "stitched_output_test.TIF")
         
         print(f"Testing full scene prediction on {first_scene}")

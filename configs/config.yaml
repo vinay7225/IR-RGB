@@ -1,8 +1,8 @@
 # Configuration settings for ISRO Landsat IR to RGB pipeline
 
 data:
-  raw_dir: "c:/Users/harshit/Desktop/ISRO/DATASET/FILES"
-  processed_dir: "c:/Users/harshit/Desktop/ISRO/DATASET/FILES/processed"
+  raw_dir: "../FILES"
+  processed_dir: "../FILES/processed"
   patch_size: 256
   stride: 256
   train_split: 0.8
@@ -23,7 +23,7 @@ training:
   beta1: 0.5
   beta2: 0.999
   epochs_sr: 10
-  epochs_pix2pix: 20
+  epochs_pix2pix: 30
   save_epoch_freq: 2
-  checkpoints_dir: "c:/Users/harshit/Desktop/ISRO/DATASET/checkpoints"
-  outputs_dir: "c:/Users/harshit/Desktop/ISRO/DATASET/outputs"
+  checkpoints_dir: "checkpoints"
+  outputs_dir: "outputs"

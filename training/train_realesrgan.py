@@ -21,8 +21,18 @@ def load_config(config_path="configs/config.yaml"):
 
 def main():
     config = load_config()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
+    try:
+        import torch_xla.core.xla_model as xm
+        is_tpu = True
+    except ImportError:
+        is_tpu = False
+
+    if is_tpu:
+        device = xm.xla_device()
+        print(f"Using TPU device: {device}")
+    else:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"Using device: {device}")
     
     # Paths
     processed_dir = config["data"]["processed_dir"]
@@ -74,7 +84,10 @@ def main():
             sr_ir = model(lr_ir)
             loss = criterion(sr_ir, hr_ir)
             loss.backward()
-            optimizer.step()
+            if is_tpu:
+                xm.optimizer_step(optimizer, barrier=True)
+            else:
+                optimizer.step()
             
             epoch_loss += loss.item()
             loop.set_postfix(loss=loss.item())

@@ -22,8 +22,18 @@ def load_config(config_path="configs/config.yaml"):
 
 def main():
     config = load_config()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
+    try:
+        import torch_xla.core.xla_model as xm
+        is_tpu = True
+    except ImportError:
+        is_tpu = False
+
+    if is_tpu:
+        device = xm.xla_device()
+        print(f"Using TPU device: {device}")
+    else:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"Using device: {device}")
     
     # Paths
     processed_dir = config["data"]["processed_dir"]
@@ -105,7 +115,10 @@ def main():
             # Combined D loss
             loss_d = (loss_d_real + loss_d_fake) * 0.5
             loss_d.backward()
-            optimizer_d.step()
+            if is_tpu:
+                xm.optimizer_step(optimizer_d, barrier=True)
+            else:
+                optimizer_d.step()
             
             # --- 2. Train Generator ---
             optimizer_g.zero_grad()
@@ -124,7 +137,10 @@ def main():
             # Combined G loss
             loss_g = loss_g_gan + (lambda_l1 * loss_g_l1) + (lambda_semantic * loss_g_semantic)
             loss_g.backward()
-            optimizer_g.step()
+            if is_tpu:
+                xm.optimizer_step(optimizer_g, barrier=True)
+            else:
+                optimizer_g.step()
             
             # Logging
             epoch_g_loss += loss_g.item()
